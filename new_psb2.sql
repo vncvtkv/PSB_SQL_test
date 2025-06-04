@@ -79,11 +79,28 @@ select c.credit_id,
 from credit c 
 join credit_calculations cc using(credit_id)
 where date_part('year', c.issued_date) = date_part('year', current_date)
-group by c.credit_id
+group by c.credit_id;
 
--- Вторая задача
+-- Второй пункт
 /*
-для каждого кредита вывести актуальный статус (с максимальной датой calculation_date).
+Для каждого кредита вывести актуальный статус (с максимальной датой calculation_date).
 Здесь хотелось бы увидеть 2 варианта решения – с использованием оконной функции и
 без неё,
 */
+
+-- а) без оконной функции
+with max_calc_date as (
+select c.credit_id,
+       MAX(calculation_date) as max_date
+from credit c 
+join credit_calculations cc using(credit_id)
+group by c.credit_id)
+
+select credit_id,
+       status
+from credit_calculations
+where (credit_id, calculation_date) in (select * from max_calc_date)
+
+
+
+-- б) с оконной функцией
