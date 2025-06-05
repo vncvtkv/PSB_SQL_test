@@ -9,11 +9,9 @@ amount NUMERIC(10, 2),
 );
 
 -- Заполнение данными Table
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM "Table") THEN
-    INSERT INTO "Table" (client_id, amount, "date") VALUES 
-						(1, 75.50, '2023-03-15'),
+truncate table "Table";
+INSERT INTO "Table" (client_id, amount, "date") VALUES 
+(1, 75.50, '2023-03-15'),
 (1, 120.00, '2023-04-22'),
 (1, 45.75, '2023-05-10'),
 (1, 98.20, '2023-06-01'),
@@ -49,11 +47,7 @@ BEGIN
 
 (5, 25.50, '2023-01-25'),
 (5, 75.00, '2023-01-13');
-  END IF;
-END $$;
 
-select * 
-from "Table";
 
 -- Необходимо написать запросы, которые покажут:
 -- Первый пункт
