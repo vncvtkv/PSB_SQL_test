@@ -1,4 +1,32 @@
-# PSB_SQL_test
+# Тестовое задание для ПСБ Банка
+
+## Быстрый старт
+
+1.  **Клонируйте репозиторий:**
+
+    ```bash
+    git clone https://github.com/vncvtkv/PSB_SQL_test.git
+    cd PSB_SQL_test
+    ```
+2.  **Запустите бд с помощью Docker Compose:**
+
+    ```bash
+    docker compose up --build
+    ```
+    *   Эта команда автоматически запустит базу данных PostgreSQL.
+3.  **Подключение через DBeaver**
+    1. Создано новое подключение к PostgreSQL
+    2. Указаны параметры:
+        
+        * Хост: localhost
+        
+        * Порт: 5432
+
+        * База данных: psb
+
+        * Пользователь: postgres
+
+        * Пароль: postgres
 
 # Условия задач
 ## Задача 1
