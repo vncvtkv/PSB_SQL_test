@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS employee (
 );
 
 -- Заполнение данными employee
-truncate table employee;
+TRUNCATE TABLE employee;
 INSERT INTO employee (id, hire_date, chief_id, salary) VALUES
 (1, '2020-01-15', NULL, 100000.00),  -- Главный начальник (нет начальника)
 (2, '2021-03-10', 1, 75000.00),  -- Подчиненный начальника 1
@@ -36,30 +36,30 @@ from employee;
 1. Посчитать количество сотрудников, которые работают в компании дольше, чем их
 непосредственные начальники;
 */
-with employees_with_later_hired_chiefs as(
-select e.id AS employee_id 
-from employee e
-join employee chief on e.chief_id = chief.id
-group by e.id
-having MIN(chief.hire_date - e.hire_date) > 0)
+WITH employees_with_later_hired_chiefs AS(
+SELECT e.id AS employee_id 
+FROM employee e
+JOIN employee chief ON e.chief_id = chief.id
+GROUP BY e.id
+HAVING MIN(chief.hire_date - e.hire_date) > 0)
 
-select COUNT(employee_id)
-from employees_with_later_hired_chiefs;
+SELECT COUNT(employee_id)
+FROM employees_with_later_hired_chiefs;
 
 
 /*
 2. Проверить, есть ли дублирующиеся строки по сотруднику (id) в таблице employee –
 вывести пример такого сотрудника.
 */
-with duplicates as(
-select id,
-	   row_number() over (partition by id order by id) as rn
-from employee
+WITH duplicates AS(
+SELECT id,
+	   row_number() OVER (PARTITION BY id ORDER BY id) AS rn
+FROM employee
 )
-select e.id, 
+SELECT e.id, 
        e.hire_date,
        e.chief_id,
        e.salary
-from employee e
-join duplicates d USING(id)
-where d.rn = 2;
+FROM employee e
+JOIN duplicates d USING(id)
+WHERE d.rn = 2;
