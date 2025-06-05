@@ -1,17 +1,16 @@
 -- Первая задача
 
 -- Создание таблицы Table
-create table if not exists "Table" (
-id SERIAL primary key,
-client_id INT,
-amount NUMERIC(10, 2),
-"date" date
+CREATE TABLE IF NOT EXISTS "Table" (
+  CLIENT_ID INT,
+  AMOUNT NUMERIC(10, 2),
+  "DATE" DATE
 );
 
 -- Заполнение данными Table
-truncate table "Table";
-INSERT INTO "Table" (client_id, amount, "date") VALUES 
-(1, 75.50, '2023-03-15'),
+TRUNCATE TABLE "Table";
+INSERT INTO "Table" (CLIENT_ID, AMOUNT, "DATE") VALUES 
+(1, 75.50, '2023-03-15'),  --Нет покупок в январе 2023
 (1, 120.00, '2023-04-22'),
 (1, 45.75, '2023-05-10'),
 (1, 98.20, '2023-06-01'),
@@ -50,51 +49,42 @@ INSERT INTO "Table" (client_id, amount, "date") VALUES
 
 
 -- Необходимо написать запросы, которые покажут:
--- Первый пункт
 /*
-количество клиентов магазина.
+1. Количество клиентов магазина;
 */
-select COUNT(distinct client_id) as cnt_client
-from "Table";
+SELECT COUNT(DISTINCT client_id) AS cnt_client
+FROM "Table";
 
--- Второй пункт
+
 /*
-за январь 2023 года для каждого клиента сумму всех его покупок, среднюю сумму
-покупки, максимальный размер покупки (самую дорогую),
+2. За январь 2023 года для каждого клиента сумму всех его покупок, среднюю сумму
+покупки, максимальный размер покупки (самую дорогую);
 */
 
-select client_id,
-	   SUM(amount) as total_amout,
-	   AVG(amount) as avg_amout,
-	   MAX(amount) as max_amout
-from "Table"
-where "date" between '2023-01-01' and '2023-01-31'
-group by client_id
+SELECT
+	client_id,
+	SUM(CASE WHEN "DATE" BETWEEN '2023-01-01' AND '2023-01-31' THEN amount
+           ELSE 0 END) AS total_amount,
+	CASE
+		WHEN COUNT(CASE WHEN "DATE" BETWEEN '2023-01-01' AND '2023-01-31' THEN 1 END) = 0 THEN 0
+		ELSE SUM(CASE WHEN "DATE" BETWEEN '2023-01-01' AND '2023-01-31' THEN amount END) 
+             / COUNT(CASE WHEN "DATE" BETWEEN '2023-01-01' AND '2023-01-31' THEN 1 END)
+	END AS avg_amount,
+	MAX(CASE WHEN "DATE" BETWEEN '2023-01-01' AND '2023-01-31' THEN amount
+           ELSE 0 END) AS max_amount
+FROM
+	"Table"
+GROUP BY
+	client_id;
 
-union 
-
-select client_id,
-	   0 as total_amout,
-	   0 as avg_amout,
-	   0 as max_amout
-from "Table" t1
-where not exists (select 1
-from "Table" t2 
-where "date" between '2023-01-01' and '2023-01-31'
-             and t1.client_id = t2.client_id
-);
-
-;
-
--- Третий пункт
 /*
-клиентов, которые совершили больше 2 покупок и количество совершенных покупок.
+3. Клиентов, которые совершили больше 2 покупок и количество совершенных покупок.
 Результат необходимо отразить по убыванию количества совершенных покупок.
 */
 
-select client_id,
-       COUNT(*) as cnt
-from "Table"
-group by client_id
-having COUNT(*) > 2
-order by 2 DESC
+SELECT client_id,
+       COUNT(*) AS cnt
+FROM "Table"
+GROUP by client_id
+HAVING COUNT(*) > 2
+ORDER BY cnt DESC;
