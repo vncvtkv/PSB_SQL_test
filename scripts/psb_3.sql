@@ -28,9 +28,6 @@ INSERT INTO employee (id, hire_date, chief_id, salary) VALUES
 (13, '2020-01-15', 4, 150000.00);   
 
 
-select *
-from employee;
-
 -- Необходимо:
 /*
 1. Посчитать количество сотрудников, которые работают в компании дольше, чем их
@@ -41,7 +38,8 @@ SELECT e.id AS employee_id
 FROM employee e
 JOIN employee chief ON e.chief_id = chief.id
 GROUP BY e.id
-HAVING MIN(chief.hire_date - e.hire_date) > 0)
+HAVING MIN(chief.hire_date - e.hire_date) > 0) -- Считал, что у одного
+                                               -- сотрудника может быть несколько начальников
 
 SELECT COUNT(employee_id)
 FROM employees_with_later_hired_chiefs;
